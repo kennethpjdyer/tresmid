@@ -7,7 +7,8 @@ defmodule Tresmid.MixProject do
       version: "0.1.0",
       elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      escript: [main_module: Tresmid.CLI]
     ]
   end
 
@@ -23,7 +24,10 @@ defmodule Tresmid.MixProject do
     [
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
-      {:ex_doc, "~> 0.21", only: :dev, runtime: false}
+      {:mongodb_driver, "~> 0.8.0"},
+      {:ex_doc, "~> 0.21", only: :dev, runtime: false},
+      {:git_cli, "~> 0.3"},
+      {:yaml_elixir, "~> 2.8.0"}
     ]
   end
 end

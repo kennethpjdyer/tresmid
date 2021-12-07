@@ -1,7 +1,9 @@
 # Tresmid
 
 Tresmid (from the Old Icelandic *trésmiðr* 'tree-smith') is a tool for building
-and managing Git work trees.
+and managing Git work trees.  Its purpose is to streamline the Git commands and
+make it easier to use large numbers of work tree directories across multiple
+repositories.
 
 
 ## Installation
