@@ -52,7 +52,7 @@ defmodule Tresmid.CLI.Commands do
   def run({opts, ["repo"| args]}) do
     Tresmid.Database.start_link(opts[:verbose])
     case args do
-      ["add", repo] -> Tresmid.Repo.add(repo, opts[:cwd])
+      ["add", repo] -> Tresmid.Repo.add(repo)
       ["dump", repo ] -> Tresmid.Repo.dump(repo)
       ["get", repo, var] -> Tresmid.Repo.get(repo, var)
       ["set", repo, var, val] -> Tresmid.Repo.set(repo, var, val)

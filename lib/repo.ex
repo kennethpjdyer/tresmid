@@ -1,28 +1,112 @@
-defmodule Tresmid.Repos do
+defmodule Tresmid.Repo do
   @moduledoc """
   Provides functions for configuration and interaction with Git repositories.
   """
 
-  ##################### COMMAND-LINE FUNCTIONS ####################
-
-  @doc since: "0.1.0"
-  def add(repo, cwd) do
+  ################# HELPER FUNCTIONS #####################
+  def default_config(repo) do
+    data = Mongo.find_one(
+      Tresmid.Database.conn(),
+      :config,
+      %{},
+      [projection: %{_id: 0, mtime: 0}]
+    )
+    %{
+      repo: repo,
+      path: Path.join(data["root_dir"], repo),
+      github_user: data["github_user"],
+      github_email: data["github_email"],
+      remotes: %{}
+    }
   end
 
+
+  ##################### COMMAND-LINE FUNCTIONS ####################
+  @doc """
+  Add a repository document to MongoDB.
+
+  This function is called from the command-line,
+  using a `repo` sub-command.
+
+  ```console
+  $ tresmid repo add example
+  $ ls ~/.tresmid
+  example
+  ```
+  """
+  @doc since: "0.1.0"
+  def add(repo) do
+    data = default_config(repo)
+    if !File.exists?(data[:path]) do
+      File.mkdir_p(data[:path])
+    end
+
+    case Mongo.update_one(
+      Tresmid.Database.conn(),
+      :repos,
+      %{repo: repo},
+      %{"$set": data},
+      [upsert: true]
+    ) do
+      {:ok, _} -> IO.puts("Repository #{repo} created with default configuration.")
+      {:error, reason} -> IO.puts("Error creating repo: #{reason}")
+
+    end
+  end
+
+  @doc """
+  Prints the configuration of the given repository to stdout.
+
+  This function is called from the command-line using a
+  `repo` sub-command.
+
+  ```console
+  $ tresmid repo dump example
+  ```
+  """
   @doc since: "0.1.0"
   def dump(repo) do
   end
-  def dump do
-  end
 
+  @doc """
+  Removes a repository document from MongoDB.
+
+  This function is called from the command-line using
+  a `repo` sub-command.
+
+  ```console
+  $ tresmid drop example
+  ```
+  """
   @doc since: "0.1.0"
   def drop(repo) do
   end
 
+  @doc """
+  Retrieves the value of a configuration option
+  for the given repository.
+
+  This funciton is called from the command-line
+  using a `repo` sub-command.
+
+  ```console
+  $ tresmid repo get example github_email
+  github_email: user@example.com
+  ```
+  """
   @doc since: "0.1.0"
   def get(repo, var) do
   end
 
+  @doc """
+  Sets the value on the given repository configuration value.
+
+  This function is called from the command-line
+  using a `repo` sub-command.
+
+  ```console
+  $ tresmid repo set example github_email user@example.com
+  """
   @doc since: "0.1.0"
   def set(repo, var, val) do
   end

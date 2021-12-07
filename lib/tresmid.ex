@@ -33,7 +33,7 @@ defmodule Tresmid do
 
   #{Tresmid.Config.docs}
 
-  #{Tresmid.Repos.docs}
+  #{Tresmid.Repo.docs}
 
   """
 
