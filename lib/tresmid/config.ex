@@ -22,7 +22,7 @@ defmodule Tresmid.Config do
   @doc since: "0.1.0"
   def default_config do
     %{
-      repos_home: Path.expand("~/.tresmid"),
+      root_dir: Path.expand("~/.tresmid"),
       github_user: nil,
       github_email: nil,
       mtime: now()
@@ -37,12 +37,32 @@ defmodule Tresmid.Config do
 
   ```console
   $ tresmid config dump
+  Tresmid Configuration:",
+  - Tresmid Root: /home/user/.tresmid
+  - GitHub Configuration:",
+    - GitHub User: username
+    - GitHub Email: user@example.com
   ```
   """
   @doc since: "0.1.0"
   def dump do
-  end
+    data = Mongo.find_one(
+      Tresmid.Database.conn(),
+      :config,
+      %{},
+      [projection: %{ _id: 0}]
+    )
 
+    [
+      "Tresmid Configuration:",
+      "- root_dir: #{data["root_dir"]}",
+      "- GitHub Configuration:",
+      "  - github_user: #{data["github_user"]}",
+      "  - github_email: #{data["github_email"]}",
+    ]
+    |> Enum.join("\n")
+    |> IO.puts
+  end
 
   @doc """
   Retrieve the value specified for the given variable from the configuraiton
@@ -56,6 +76,14 @@ defmodule Tresmid.Config do
   """
   @doc since: "0.1.0"
   def get(var) do
+    data = Mongo.find_one(
+      Tresmid.Database.conn(),
+      :config,
+      %{},
+      [projection: %{ _id: 0}]
+    )
+
+    IO.puts("#{var}: #{Map.get(data, var)}")
   end
 
   @doc """
@@ -65,6 +93,7 @@ defmodule Tresmid.Config do
 
   ```console
   $ tresmid config init
+  Configuration updated
   ```
   """
   @doc since: "0.1.0"
@@ -81,7 +110,6 @@ defmodule Tresmid.Config do
     end
   end
 
-
   @doc """
   Specifies a new value for the given configuration option.
 
@@ -93,8 +121,17 @@ defmodule Tresmid.Config do
   """
   @doc since: "0.1.0"
   def set(var, value) do
+    case Mongo.update_one(
+      Tresmid.Database.conn(),
+      :config,
+      %{name: "config"},
+      %{"$set": %{var => value}},
+      [upsert: true]
+    ) do
+      {:ok, _} -> IO.puts("#{var} configuration option updated")
+      {:error, reason} -> IO.puts("Error updating config: #{reason}")
+    end
   end
-
 
   ########################### DOCUMENTATION FUNCTIONS ########################
   @doc false
