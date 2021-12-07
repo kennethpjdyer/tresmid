@@ -48,6 +48,24 @@ defmodule Tresmid.CLI.Commands do
   def run({opts, ["config"]}) do
   end
 
+  ################### REPO COMMANDS ############################
+  def run({opts, ["repo"| args]}) do
+    Tresmid.Database.start_link(opts[:verbose])
+    case args do
+      ["add", repo] -> Tresmid.Repo.add(repo, opts[:cwd])
+      ["dump", repo ] -> Tresmid.Repo.dump(repo)
+      ["dump"] -> Tresmid.Repo.dump
+      ["drop", repo ] -> Tresmid.Repo.drop(repo)
+      ["get", repo, var] -> Tresmid.Repo.get(repo, var)
+      ["set", repo, var, val] -> Tresmid.Repo.set(repo, var, val)
+      _ ->
+        IO.puts("Unknown repo Arguments: #{Enum.join(args, " ")}")
+        Tresmid.Repo.usage
+    end
+  end
+
+
+  ################### HELP COMMANDS #############################
   def run({opts, args, :help}) do
     Logger.info("Called help operation.")
     Tresmid.CLI.Docs.usage

@@ -3,6 +3,30 @@ defmodule Tresmid.Repos do
   Provides functions for configuration and interaction with Git repositories.
   """
 
+  ##################### COMMAND-LINE FUNCTIONS ####################
+
+  @doc since: "0.1.0"
+  def add(repo, cwd) do
+  end
+
+  @doc since: "0.1.0"
+  def dump(repo) do
+  end
+  def dump do
+  end
+
+  @doc since: "0.1.0"
+  def drop(repo) do
+  end
+
+  @doc since: "0.1.0"
+  def get(repo, var) do
+  end
+
+  @doc since: "0.1.0"
+  def set(repo, var, val) do
+  end
+
   ######################### DOCUMENTATION FUNCTIONS ###########################
   @doc false
   def docs do
