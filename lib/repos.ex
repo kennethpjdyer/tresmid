@@ -45,10 +45,64 @@ defmodule Tresmid.Repos do
     | Sub-Command | Description |
     |---|---|
     | `add` | Adds a repository document with a default configuration to MongoDB. |
-    | `dump` | Prints the repository configuration to stdout. |
     | `drop`| Removes a repository document from MongoDB. |
+    | `dump` | Prints the repository configuration to stdout. |
     | `get` | Retrieves the value of a repository configuration option. |
     | `set` | Sets a value on the given repository configuration variable. |
+
+    ##### repo add
+
+    Adds a repository document to MongoDB.
+
+    Repositories start out with a default configuration
+    set to the current directory.  The configuration is inserted
+    as a document in a MongoDB document in the `tresmid.repos`
+    collection.  This document requires further configuration to use.
+
+    To further configure the repository, see `repo set`.
+
+    ```console
+    $ tresmid repo add example
+    ```
+
+    ##### repo drop
+
+    Removes a repository document from MonoDB.
+
+    Repository documents contain the full configuration
+    of the repository, as well as all work tree branches added
+    to the repository.
+
+    > **Warning**: Dropping a repository configuration is not reversable.
+
+    ```console
+    $ tresmid repo drop example
+    ```
+
+    ##### repo dump
+
+    Prints the repository configuration to stdout.
+
+    ```console
+    $ tresmid repo dump example
+    ```
+
+    ##### repo get
+
+    Retrieves the current value of a repository configuration option.
+
+    ```console
+    $ tresmid repo get example repo_home
+    /home/user/.work-repos/example
+    ```
+
+    ##### repo set
+
+    Sets a new value on the specified repository configuration option.
+
+    ```console
+    $ tresmid repo set example github_email user@example.com
+    ```
 
     """
   end
