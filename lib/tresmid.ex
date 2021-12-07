@@ -29,8 +29,11 @@ defmodule Tresmid do
   |Command | Description |
   |---|---|
   | `config` | Used to manage global configuration options. |
+  | `repo` | Used to interact with and manage local Git repositories. |
 
   #{Tresmid.Config.docs}
+
+  #{Tresmid.Repos.docs}
 
   """
 

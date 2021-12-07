@@ -200,7 +200,4 @@ defmodule Tresmid.Config do
   def usage do
     "Usage text for the config command and sub-commands has not yet been written."
   end
-
-
-
 end
