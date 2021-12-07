@@ -1,5 +1,6 @@
 defmodule Tresmid.CLI.Commands do
   require Logger
+  @moduledoc false
 
   def cwd(path) do
     case path do
@@ -15,9 +16,36 @@ defmodule Tresmid.CLI.Commands do
     ]
   end
 
-  def run({opts, ["config", "dump" | _ignored]}) do
-    Logger.info("Called config dump operation")
-    Tresmid.Database.Config.dump
+  def help(cmd) do
+    "\n\tSee tresmid #{cmd} help for additional information."
+  end
+
+  ################## CONFIGURATION COMMANDS ####################
+
+  # Getter and Setter
+  def run({opts, ["config", sub | rest]}) do
+    Tresmid.Database.start_link(opts[:verbose])
+
+    case sub do
+      "get" ->
+        [var | _ ] = rest
+        Tresmid.Config.get(var)
+      "set" ->
+        [var, val | _] = rest
+        Tresmid.Config.set(var, val)
+      "init" ->
+        Tresmid.Config.init
+      "dump" ->
+        Tresmid.Config.dump
+      "help" ->
+        IO.puts(Tresmid.Config.usage)
+      true ->
+        IO.puts("Invalid config Sub-command: #{sub}#{help("config")}", :stderr)
+    end
+  end
+
+  # Default Config
+  def run({opts, ["config"]}) do
   end
 
   def run({opts, args, :help}) do

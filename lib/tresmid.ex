@@ -30,7 +30,7 @@ defmodule Tresmid do
   |---|---|
   | `config` | Used to manage global configuration options. |
 
-  #{Tresmid.Database.Config.docs}
+  #{Tresmid.Config.docs}
 
   """
 
