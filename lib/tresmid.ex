@@ -18,23 +18,6 @@ defmodule Tresmid do
   The primary interface for Tresmid is the command-line application
   `tresmid`.
 
-  ### Options
-
-  ```text
-  #{Tresmid.CLI.Docs.opts}
-  ```
-
-  ### Commands
-
-  |Command | Description |
-  |---|---|
-  | `config` | Used to manage global configuration options. |
-  | `repo` | Used to interact with and manage local Git repositories. |
-
-  #{Tresmid.Config.docs}
-
-  #{Tresmid.Repo.docs}
-
   """
 
 end

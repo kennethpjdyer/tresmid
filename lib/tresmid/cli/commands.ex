@@ -1,6 +1,22 @@
 defmodule Tresmid.CLI.Commands do
   require Logger
-  @moduledoc false
+  @moduledoc """
+
+  Commands and arguments used by the Tresmid CLI application.
+
+  |Command | Description |
+  |---|---|
+  | `config` | Used to manage global configuration options. |
+  | `remote` | Used to configure remotes for local Git repositories. |
+  | `repo` | Used to configure local Git repositories. |
+
+  #{Tresmid.Config.docs}
+
+  #{Tresmid.Remote.docs}
+
+  #{Tresmid.Repo.docs}
+
+  """
 
   def cwd(path) do
     case path do
@@ -12,6 +28,8 @@ defmodule Tresmid.CLI.Commands do
   def docs do
     [
       {"config", "Sets global configuration."},
+      {"remote", "Manages remotes for repository home"},
+      {"repo", "Configures directory to operate as a repository home."},
       {"help", "Provides usage information."}
     ]
   end
@@ -48,6 +66,19 @@ defmodule Tresmid.CLI.Commands do
   def run({opts, ["config"]}) do
   end
 
+  ################## REMOTE COMMANDS ###########################
+  def run({opts, ["remote" | args]}) do
+    Tresmid.Database.start_link(opts[:verbose])
+
+    case args do
+      ["add", repo, remote, url] -> Tresmid.Remote.add(repo, remote, url)
+      ["drop", repo, remote] -> Tresmid.Remote.drop(repo, remote)
+      [repo] -> Tresmid.Remote.list(repo)
+      [] -> Tresmid.Remote.list
+      _ -> IO.puts("Invalid remote Arguments: #{Enum.join(args, " ")}")
+    end
+  end
+
   ################### REPO COMMANDS ############################
   def run({opts, ["repo"| args]}) do
     Tresmid.Database.start_link(opts[:verbose])
@@ -58,6 +89,7 @@ defmodule Tresmid.CLI.Commands do
       ["set", repo, var, val] -> Tresmid.Repo.set(repo, var, val)
       ["drop", repo ] -> Tresmid.Repo.drop(repo)
       ["init", repo] -> Tresmid.Repo.init(repo)
+      [] -> Tremid.Repo.list()
       _ ->
         IO.puts("Unknown repo Arguments: #{Enum.join(args, " ")}")
         Tresmid.Repo.usage

@@ -16,7 +16,7 @@ defmodule Tresmid.Config do
   @doc """
   Provides a map that contains the default configuration of Tresmid.
 
-  This function is used by `Tresmid.Config.init to set the default
+  This function is used by `Tresmid.Config.init` to set the default
   configuration document in MongoDB.
   """
   @doc since: "0.1.0"
@@ -139,7 +139,7 @@ defmodule Tresmid.Config do
   @doc false
   def docs do
     """
-    #### config
+    ## config
 
     Tresmid stores its configuration in a MongoDB document located in the
     `tresmid.config` collection.   Sub-commands under `config` allow for
@@ -156,7 +156,7 @@ defmodule Tresmid.Config do
     | `init` | Initalizes the configuration document in the database. |
     | `set` | Sets the given configuration option to the specified value. |
 
-    ##### config dump
+    ### config dump
 
     Prints the global configuration to stdout.
 
@@ -169,7 +169,7 @@ defmodule Tresmid.Config do
     ```
 
 
-    ##### config get
+    ### config get
 
     Retrieves the value set for the given configuration option.
 
@@ -178,7 +178,7 @@ defmodule Tresmid.Config do
     /home/user/.work-repos
     ```
 
-    ##### config init
+    ### config init
 
     Initializes the configuration document, resetting all values to their defaults.
     The sub-command takes no arguments
@@ -187,7 +187,7 @@ defmodule Tresmid.Config do
     $ tresmid config init
     ```
 
-    ##### config set
+    ### config set
 
     Sets the given configuration option to the specified value.
 

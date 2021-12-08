@@ -1,6 +1,17 @@
 defmodule Tresmid.CLI.Options do
-  @moduledoc false
+  @moduledoc """
 
+  ```text
+  {Tresmid.CLI.Docs.opts}
+  ```
+
+  """
+
+  @spec docs :: [
+          {<<_::8>>, <<_::40, _::_*16>>, <<_::264, _::_*64>>}
+          | {<<_::8>>, <<_::24>>, <<_::24>>, <<_::216>>},
+          ...
+        ]
   def docs do
     [
       {"C", "cwd", "DIR", "Sets the current directory."},

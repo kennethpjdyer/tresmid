@@ -156,6 +156,14 @@ defmodule Tresmid.Repo do
   end
 
   @doc """
+  Lists available repositories.
+  """
+  @doc since: "0.1.0"
+  def list do
+    IO.puts("Repo list has not yet been implemented.")
+  end
+
+  @doc """
   Sets the value on the given repository configuration value.
 
   This function is called from the command-line
@@ -191,16 +199,12 @@ defmodule Tresmid.Repo do
   @doc false
   def docs do
     """
-    #### repo
+    ## repo
 
-    /* TODO: Provide an introduction to the repo command. Note that the repo
-    command is designed to configure a repository rather than interact with it.*/
-
-    /* TODO: Note the default behavior.
-
-    * `tresmid repo` lists configured repositories.
-    * `tresmid repo <name>` provides basic status information.
-    */
+    Tresmid uses the `repo` command to configure local repositories.
+    Sub-commands allow for listing available repositories,
+    adding and removing repository configurations,
+    modifying configuration values, and initializing main branches.
 
     | Sub-Command | Description |
     |---|---|
@@ -211,7 +215,7 @@ defmodule Tresmid.Repo do
     | `get` | Retrieves the value of a repository configuration option. |
     | `set` | Sets a value on the given repository configuration variable. |
 
-    ##### repo add
+    ### repo add
 
     Adds a repository document to MongoDB.
 
@@ -226,7 +230,7 @@ defmodule Tresmid.Repo do
     $ tresmid repo add example-repo
     ```
 
-    ##### repo drop
+    ### repo drop
 
     Removes a repository document from MonoDB.
 
@@ -240,7 +244,7 @@ defmodule Tresmid.Repo do
     $ tresmid repo drop example-repo
     ```
 
-    ##### repo dump
+    ### repo dump
 
     Prints the repository configuration to stdout.
 
@@ -248,7 +252,7 @@ defmodule Tresmid.Repo do
     $ tresmid repo dump example
     ```
 
-    ##### repo init
+    ### repo init
 
     Clones the main branch of the repository into the configured directory.
 
@@ -256,7 +260,7 @@ defmodule Tresmid.Repo do
     $ tresmid repo init example-repo
     ```
 
-    ##### repo get
+    ### repo get
 
     Retrieves the current value of a repository configuration option.
 
@@ -265,7 +269,7 @@ defmodule Tresmid.Repo do
     /home/user/.work-repos/example-repo
     ```
 
-    ##### repo set
+    ### repo set
 
     Sets a new value on the specified repository configuration option.
 
