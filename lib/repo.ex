@@ -19,7 +19,7 @@ defmodule Tresmid.Repo do
       github_email: data["github_email"],
       remotes: %{},
       worktrees: %{},
-      main: ["master"]
+      main: "master"
     }
   end
 
@@ -152,7 +152,26 @@ defmodule Tresmid.Repo do
   """
   @doc since: "0.1.0"
   def init(repo) do
-    IO.puts("Repo Initialization is not yet implemented", :stderr)
+    document = Mongo.find_one(
+      Tresmid.Database.conn(),
+      :repos,
+      %{
+        remotes: %{"$exists": true},
+        repo: repo
+      }
+    )
+
+    path = Path.join(document["path"], document["main"])
+
+    if Enum.count(document["remotes"]) > 1 do
+      up = document["remotes"]["upstream"]
+      {:ok, git} = Git.clone([up, path])
+      {:ok, _} = Git.pull(git)
+    else
+      up = document["remotes"]["origin"]
+      {:ok, git} = Git.clone([up, path])
+      {:ok, _} = Git.pull(git)
+    end
   end
 
   @doc """
@@ -160,7 +179,21 @@ defmodule Tresmid.Repo do
   """
   @doc since: "0.1.0"
   def list do
-    IO.puts("Repo list has not yet been implemented.")
+    Mongo.find(
+      Tresmid.Database.conn(),
+      :repos,
+      %{remotes: %{"$exists": true}}
+    )
+    |> Enum.to_list
+    |> Enum.map(
+      fn repo ->
+        "#{repo["repo"]}: #{Enum.count(repo["remotes"])} remotes / #{Enum.count(repo["worktrees"])} worktrees"
+      end
+    )
+    |> Enum.join("\n")
+    |> IO.puts
+
+
   end
 
   @doc """
@@ -176,7 +209,7 @@ defmodule Tresmid.Repo do
   Note that the `repo` interface cannot be used to update remotes or worktrees.
   """
   @doc since: "0.1.0"
-  def set(repo, var, val) when var in ["remotes", "main", "worktree"] do
+  def set(repo, var, val) when var in ["remotes", "worktree"] do
     IO.puts("ERROR: The repo interface cannot be used to update #{var} repository configuration")
   end
 

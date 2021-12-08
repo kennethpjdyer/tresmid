@@ -22,7 +22,7 @@ defmodule Tresmid.Remote do
       %{repo: repo},
       %{"$set": %{
         "remotes.#{remote}": url
-      }}, [upsert: true]
+      }}
     ) do
       {:ok, _} -> IO.puts("Remote #{remote} added to #{repo} configuration.")
       {:error, reason} -> IO.puts("Error adding remote to #{repo}: #{reason}")
@@ -40,6 +40,17 @@ defmodule Tresmid.Remote do
   """
   @doc since: "0.1.0"
   def drop(repo, remote) do
+    case Mongo.update_one(
+      Tresmid.Database.conn(),
+      :repos,
+      %{repo: repo},
+      %{"$set": %{
+        remote: remote
+      }}
+    ) do
+      {:ok, _} -> IO.puts("Remote #{remote} added to #{repo} configuration.")
+      {:error, reason} -> IO.puts("Error adding remote to #{repo}: #{reason}")
+    end
   end
 
   @doc """

@@ -15,7 +15,6 @@ defmodule Tresmid.CLI.Commands do
   #{Tresmid.Remote.docs}
 
   #{Tresmid.Repo.docs}
-
   """
 
   def cwd(path) do
@@ -89,7 +88,7 @@ defmodule Tresmid.CLI.Commands do
       ["set", repo, var, val] -> Tresmid.Repo.set(repo, var, val)
       ["drop", repo ] -> Tresmid.Repo.drop(repo)
       ["init", repo] -> Tresmid.Repo.init(repo)
-      [] -> Tremid.Repo.list()
+      [] -> Tresmid.Repo.list()
       _ ->
         IO.puts("Unknown repo Arguments: #{Enum.join(args, " ")}")
         Tresmid.Repo.usage

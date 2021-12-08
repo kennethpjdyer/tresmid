@@ -1,4 +1,5 @@
 
+default: escript
 
 docs: docs-build docs-sync 
 
