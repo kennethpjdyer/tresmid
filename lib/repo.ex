@@ -11,12 +11,15 @@ defmodule Tresmid.Repo do
       %{},
       [projection: %{_id: 0, mtime: 0}]
     )
+
     %{
       repo: repo,
       path: Path.join(data["root_dir"], repo),
       github_user: data["github_user"],
       github_email: data["github_email"],
-      remotes: %{}
+      remotes: %{},
+      worktrees: %{},
+      main: ["master"]
     }
   end
 
@@ -29,9 +32,9 @@ defmodule Tresmid.Repo do
   using a `repo` sub-command.
 
   ```console
-  $ tresmid repo add example
+  $ tresmid repo add example-repo
   $ ls ~/.tresmid
-  example
+  example-repo
   ```
   """
   @doc since: "0.1.0"
@@ -61,11 +64,37 @@ defmodule Tresmid.Repo do
   `repo` sub-command.
 
   ```console
-  $ tresmid repo dump example
+  $ tresmid repo dump example-repo
   ```
   """
   @doc since: "0.1.0"
   def dump(repo) do
+    data = Mongo.find_one(
+      Tresmid.Database.conn(),
+      :repos,
+      %{repo: repo},
+      [projection: %{ _id: 0}]
+    )
+
+    [
+      "Repository Configuration:",
+      "- repo: #{data["repo"]}",
+      "- path: #{data["path"]}",
+      "- main: #{Enum.join(data["main"], ", ")}",
+      "",
+      "GitHub Configuration:",
+      "- github_user: #{data["github_user"]}",
+      "- github_email: #{data["github_email"]}",
+      "",
+      "Remote Configuration:",
+      "",
+      "Work Tree Configuration:",
+    ]
+    |> Enum.join("\n")
+    |> IO.puts
+
+    # TODO: Add configuration for Remotes and Work Trees.
+
   end
 
   @doc """
@@ -75,11 +104,16 @@ defmodule Tresmid.Repo do
   a `repo` sub-command.
 
   ```console
-  $ tresmid drop example
+  $ tresmid drop example-repo
   ```
   """
   @doc since: "0.1.0"
   def drop(repo) do
+    Mongo.delete_one(
+      Tresmid.Database.conn(),
+      :repos,
+      %{repo: repo}
+    )
   end
 
   @doc """
@@ -90,12 +124,35 @@ defmodule Tresmid.Repo do
   using a `repo` sub-command.
 
   ```console
-  $ tresmid repo get example github_email
+  $ tresmid repo get example-repo github_email
   github_email: user@example.com
   ```
   """
   @doc since: "0.1.0"
   def get(repo, var) do
+    data = Mongo.find_one(
+      Tresmid.Database.conn(),
+      :repos,
+      %{repo: repo},
+      [projection: %{ _id: 0}]
+    )
+
+    IO.puts("#{var}: #{Map.get(data, var)}")
+  end
+
+  @doc """
+  Initializes the repository, cloning the specified main branches into the
+  configured repository home directory.
+
+  This function is called from the command-line using a `repo` sub-command.
+
+  ```console
+  $ tresmid repo init example-repo
+  ```
+  """
+  @doc since: "0.1.0"
+  def init(repo) do
+    IO.puts("Repo Initialization is not yet implemented", :stderr)
   end
 
   @doc """
@@ -105,10 +162,29 @@ defmodule Tresmid.Repo do
   using a `repo` sub-command.
 
   ```console
-  $ tresmid repo set example github_email user@example.com
+  $ tresmid repo set example-repo github_email user@example.com
+  ```
+
+  Note that the `repo` interface cannot be used to update remotes or worktrees.
   """
   @doc since: "0.1.0"
+  def set(repo, var, val) when var in ["remotes", "main", "worktree"] do
+    IO.puts("ERROR: The repo interface cannot be used to update #{var} repository configuration")
+  end
+
+  @doc since: "0.1.0"
   def set(repo, var, val) do
+    case Mongo.update_one(
+      Tresmid.Database.conn(),
+      :repos,
+      %{repo: repo},
+      %{"$set": %{var => val}},
+      [upsert: true]
+    ) do
+      {:ok, _} -> IO.puts("Repository #{repo} created with default configuration.")
+      {:error, reason} -> IO.puts("Error creating repo: #{reason}")
+
+    end
   end
 
   ######################### DOCUMENTATION FUNCTIONS ###########################
@@ -131,6 +207,7 @@ defmodule Tresmid.Repo do
     | `add` | Adds a repository document with a default configuration to MongoDB. |
     | `drop`| Removes a repository document from MongoDB. |
     | `dump` | Prints the repository configuration to stdout. |
+    | `init` | Initialize main branches. |
     | `get` | Retrieves the value of a repository configuration option. |
     | `set` | Sets a value on the given repository configuration variable. |
 
@@ -146,7 +223,7 @@ defmodule Tresmid.Repo do
     To further configure the repository, see `repo set`.
 
     ```console
-    $ tresmid repo add example
+    $ tresmid repo add example-repo
     ```
 
     ##### repo drop
@@ -160,7 +237,7 @@ defmodule Tresmid.Repo do
     > **Warning**: Dropping a repository configuration is not reversable.
 
     ```console
-    $ tresmid repo drop example
+    $ tresmid repo drop example-repo
     ```
 
     ##### repo dump
@@ -171,13 +248,21 @@ defmodule Tresmid.Repo do
     $ tresmid repo dump example
     ```
 
+    ##### repo init
+
+    Clones the main branch of the repository into the configured directory.
+
+    ```console
+    $ tresmid repo init example-repo
+    ```
+
     ##### repo get
 
     Retrieves the current value of a repository configuration option.
 
     ```console
-    $ tresmid repo get example repo_home
-    /home/user/.work-repos/example
+    $ tresmid repo get example-repo repo_home
+    /home/user/.work-repos/example-repo
     ```
 
     ##### repo set
@@ -185,7 +270,7 @@ defmodule Tresmid.Repo do
     Sets a new value on the specified repository configuration option.
 
     ```console
-    $ tresmid repo set example github_email user@example.com
+    $ tresmid repo set example-repo github_email user@example.com
     ```
 
     """

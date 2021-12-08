@@ -57,6 +57,7 @@ defmodule Tresmid.CLI.Commands do
       ["get", repo, var] -> Tresmid.Repo.get(repo, var)
       ["set", repo, var, val] -> Tresmid.Repo.set(repo, var, val)
       ["drop", repo ] -> Tresmid.Repo.drop(repo)
+      ["init", repo] -> Tresmid.Repo.init(repo)
       _ ->
         IO.puts("Unknown repo Arguments: #{Enum.join(args, " ")}")
         Tresmid.Repo.usage

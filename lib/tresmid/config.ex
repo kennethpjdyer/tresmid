@@ -30,6 +30,7 @@ defmodule Tresmid.Config do
   end
 
   ########################### CLI CONFIG SUB-COMMANDS ##########################
+  @spec dump :: nil
   @doc """
   Dump configuration data to stdout for reference.
 
@@ -45,7 +46,7 @@ defmodule Tresmid.Config do
   ```
   """
   @doc since: "0.1.0"
-  def dump do
+  def dump() do
     data = Mongo.find_one(
       Tresmid.Database.conn(),
       :config,
@@ -56,7 +57,8 @@ defmodule Tresmid.Config do
     [
       "Tresmid Configuration:",
       "- root_dir: #{data["root_dir"]}",
-      "- GitHub Configuration:",
+      "",
+      "GitHub Configuration:",
       "  - github_user: #{data["github_user"]}",
       "  - github_email: #{data["github_email"]}",
     ]
