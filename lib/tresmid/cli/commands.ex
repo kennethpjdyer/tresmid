@@ -23,13 +23,6 @@ defmodule Tresmid.CLI.Commands do
   #{Tresmid.Update.docs}
   """
 
-  def cwd(path) do
-    case path do
-      nil -> Path.expand(File.cwd())
-      _ -> Path.expand(path)
-    end
-  end
-
   def docs do
     [
       {"help", "Provides usage information."}
