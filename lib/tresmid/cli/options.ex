@@ -14,7 +14,9 @@ defmodule Tresmid.CLI.Options do
         ]
   def docs do
     [
-      {"C", "cwd", "DIR", "Sets the current directory."},
+      {"c", "config", "PATH",
+        "Sets the configuration file, (defaults to ~/.config/tresmid/config.yml)."
+      },
       {"L", "local", "Specifies local repository configuration."},
       {"v", "verbose", "Enables verbose logging messages."}
     ]
@@ -24,12 +26,10 @@ defmodule Tresmid.CLI.Options do
     OptionParser.parse(
       args, [
         switches: [
-          cwd: :string,
-          local: :boolean,
+          config: :string,
           verbose: :boolean
         ], aliases: [
-          C: :cwd,
-          L: :local,
+          c: :config,
           v: :verbose
         ]
       ])
@@ -42,10 +42,14 @@ defmodule Tresmid.CLI.Options do
       Enum.member?(args, "help") ->
         {opts, args, :help}
       true ->
+        # Start Config Server
+        Tresmid.Config.start_link(opts[:config])
+
+        # Set Verbose
         if Enum.member?(opts, :verbose) do
-          Tresmid.Database.start_link(true)
+          Tresmid.Config.set(:verbose, true)
         else
-          Tresmid.Database.start_link(false)
+          Tresmid.Config.set(:verbose, false)
         end
         {opts, args}
     end

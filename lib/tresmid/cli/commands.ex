@@ -6,7 +6,21 @@ defmodule Tresmid.CLI.Commands do
 
   |Command | Description |
   |---|---|
+  | `cd` | Changes to the directory of the given ticket. |
+  | `ed` | Opens the configured text editor in the directory of the given ticket. |
+  | `mk` | Creates a new work tree for the specified repository and upstream. |
+  | `rm` | Removes a work tree for the specified ticket. |
+  | `up` | Updates the work tree cache. |
 
+  #{Tresmid.ChangeDir.docs}
+
+  #{Tresmid.Edit.docs}
+
+  #{Tresmid.Make.docs}
+
+  #{Tresmid.Remove.docs}
+
+  #{Tresmid.Update.docs}
   """
 
   def cwd(path) do
@@ -26,7 +40,6 @@ defmodule Tresmid.CLI.Commands do
     "\n\tSee tresmid #{cmd} help for additional information."
   end
 
-
   ################### HELP COMMANDS #############################
   def run({opts, args, :help}) do
     case args do
@@ -35,9 +48,12 @@ defmodule Tresmid.CLI.Commands do
   end
 
   def run({opts, args}) do
-    # Commands: up ed cd mk rm
     case args do
-
+      ["ed", repo, ticket] -> Tresmimd.Edit.run(repo, ticket)
+      ["cd", repo, ticket] -> Tresmimd.ChangeDir.run(repo, ticket)
+      ["up"] -> Tresmid.Update.run
+      ["mk", repo, ticket, text, upstream] -> Tresmid.Make.run(repo, ticket, text, upstream)
+      ["rm", repo, ticket] -> Tresmid.Remove.run(repo, ticket)
     end
   end
 end
