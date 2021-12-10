@@ -13,10 +13,9 @@ defmodule Tresmid.Edit do
   @doc since: "0.1.0"
   def run(key, ticket) do
     Logger.info("Called edit operation.")
-    cache_path = Tresmid.Config.get("cache_path")
-    cmd = Tresmid.Config.get("editor")
 
-    {:ok, data} = YamlElixir.read_from_file(cache_path)
+    data = Tresmid.Config.read_cache
+    cmd = Tresmid.Config.get("editor")
 
     if key in Map.keys(data) do
       wts = data[key]

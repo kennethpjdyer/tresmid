@@ -73,6 +73,18 @@ defmodule Tresmid.Config do
     end
   end
 
+  def read_cache do
+    case YamlElixir.read_from_file(get("cache_path")) do
+      {:ok, data} ->
+        IO.puts "READ"
+        data
+      {:error, reason} ->
+        Logger.warn("Error reading cache, #{reason}")
+        Tresmid.Update.run
+        read_cache
+    end
+  end
+
   def default do
     %{
       "repo_home" => Path.expand("~/.tresmid"),

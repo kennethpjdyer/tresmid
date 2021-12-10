@@ -20,7 +20,7 @@ defmodule Tresmid.Update do
   def run do
     Logger.info("Called update operation.")
 
-    repo_home = Tresmid.Config.get("repo_home")
+    repo_home = Path.expand(Tresmid.Config.get("repo_home"))
     cache = Tresmid.Config.get("cache_path")
 
     yml = Tresmid.Config.get("repos")

@@ -22,52 +22,27 @@ defmodule Tresmid.List do
   is passed in, it only prints worktrees from the listed repositories.
   """
   @doc since: "0.1.0"
-  def run(repos) do
+  def run(targets) do
     Logger.info("Called list operation.")
 
-    cache_path = Path.expand(Tresmid.Config.get("cache_path"))
     repos = Tresmid.Config.get("repos")
+    data = Tresmid.Config.read_cache
 
-    {:ok, data} = YamlElixir.read_from_file(cache_path)
+    Logger.debug("Targets: #{Enum.join(targets, ",")} (#{length(targets)} targets)")
 
-    IO.inspect Map.keys(data)
-
-    keys =
-      if repos == [] do
+    keys = if length(targets) == 0 do
+        IO.inspect data
         Map.keys(data)
       else
-        Map.keys(data)
-        |> Enum.filter(
+        Enum.filter(
+          Map.keys(data),
           fn x ->
-            x in repos
+            x in targets
           end
         )
       end
 
-    keys
-    |> Enum.map(
-      fn key ->
-
-        head = IO.ANSI.green() <> key <> IO.ANSI.reset()
-        wts = data[key]
-        |> Enum.map(
-          fn x ->
-            wt = Map.keys(x)
-            |> Enum.map(
-              fn y ->
-                yellow_line(y, x)
-              end
-            )
-            |> Enum.join("\n")
-
-          end
-        )
-        |> Enum.join("\n\n")
-
-        "#{head}\n#{wts}\n"
-      end
-    )
-    |> Enum.join("\n")
+    IO.inspect keys
 
     format_data(keys, data, repos)
   end
