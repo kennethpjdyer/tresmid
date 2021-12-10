@@ -18,6 +18,10 @@ defmodule Tresmid do
   The primary interface for Tresmid is the command-line application
   `tresmid`.
 
+  * `Tresmid.CLI.Options`
+
+  * `Tresmid.CLI.Commands`
+
   """
 
 end

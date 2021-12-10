@@ -26,19 +26,23 @@ defmodule Tresmid.List do
     Logger.info("Called list operation.")
 
     cache_path = Path.expand(Tresmid.Config.get("cache_path"))
+    repos = Tresmid.Config.get("repos")
 
     {:ok, data} = YamlElixir.read_from_file(cache_path)
 
-    keys = if repos == [] or repos == nil do
-      Map.keys(data)
-    else
-      Map.keys(data)
-      |> Enum.filter(
-        fn x ->
-          x in repos
-        end
-      )
-    end
+    IO.inspect Map.keys(data)
+
+    keys =
+      if repos == [] do
+        Map.keys(data)
+      else
+        Map.keys(data)
+        |> Enum.filter(
+          fn x ->
+            x in repos
+          end
+        )
+      end
 
     keys
     |> Enum.map(
@@ -64,8 +68,31 @@ defmodule Tresmid.List do
       end
     )
     |> Enum.join("\n")
-    |> IO.puts
 
+    format_data(keys, data, repos)
+  end
+
+  def format_data(keys, data, repos) do
+    IO.inspect keys
+
+    |> Enum.map(
+      fn key ->
+        head = IO.ANSI.green() <> key <> IO.ANSI.reset()
+        main = repos[key]["main"]
+
+        main_repo =
+          data[key]
+          |> Enum.filter(
+            fn x ->
+              x["branch"] == main
+            end
+          )
+
+        IO.inspect main_repo
+
+        head
+      end
+    )
   end
 
   @doc """

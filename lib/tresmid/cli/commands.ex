@@ -54,7 +54,7 @@ defmodule Tresmid.CLI.Commands do
         case args do
           ["ed", repo, ticket] -> Tresmid.Edit.run(repo, ticket)
           ["ls" | repos]  -> Tresmid.List.run(repos)
-          ["mk", repo, ticket, text, upstream] -> Tresmid.Make.run(repo, ticket, text, upstream)
+          ["mk", repo, branch, upstream] -> Tresmid.Make.run(repo, branch, upstream)
           ["rm", repo, ticket] -> Tresmid.Remove.run(repo, ticket)
         end
     end
