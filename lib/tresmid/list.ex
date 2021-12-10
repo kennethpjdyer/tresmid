@@ -31,7 +31,6 @@ defmodule Tresmid.List do
     Logger.debug("Targets: #{Enum.join(targets, ",")} (#{length(targets)} targets)")
 
     keys = if length(targets) == 0 do
-        IO.inspect data
         Map.keys(data)
       else
         Enum.filter(
@@ -42,14 +41,14 @@ defmodule Tresmid.List do
         )
       end
 
-    IO.inspect keys
-
     format_data(keys, data, repos)
+    |> Enum.join("\n")
+    |> IO.puts
   end
 
   def format_data(keys, data, repos) do
-    IO.inspect keys
 
+    keys
     |> Enum.map(
       fn key ->
         head = IO.ANSI.green() <> key <> IO.ANSI.reset()
@@ -62,12 +61,47 @@ defmodule Tresmid.List do
               x["branch"] == main
             end
           )
+          |> Enum.at(0)
 
-        IO.inspect main_repo
+        wts =
+          data[key]
+          |> Enum.filter(
+            fn x ->
+              x["branch"] != main
+            end
+          )
 
-        head
+      # Format Output
+      [
+        head,
+        format_wt(main_repo)
+        |
+        wts
+        |> Enum.map(fn x -> format_wt(x) end)
+      ]
+      |> Enum.join("\n")
+
       end
     )
+  end
+
+  @doc """
+  Formats work tree data for stdout.
+  """
+  @doc since: "0.1.0"
+  def format_wt(data) do
+    path = data["path"]
+
+    fpath = Path.join(
+      Path.dirname(path),
+      IO.ANSI.yellow()
+        <> Path.basename(path)
+        <> IO.ANSI.reset())
+    "- [ "
+    <> IO.ANSI.blue()
+    <> data["ticket"]
+    <> IO.ANSI.reset()
+    <> " ]:    \t#{fpath}"
   end
 
   @doc """

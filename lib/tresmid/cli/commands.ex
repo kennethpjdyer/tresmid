@@ -26,7 +26,12 @@ defmodule Tresmid.CLI.Commands do
   @doc false
   def docs do
     [
-      {"help", "Provides usage information."}
+      {"ed", "REPO TICKET", "Opens a text editor on the specified work tree."},
+      #{"help CMD", "Provides usage information."},
+      {"ls", "[REPO...]", "Lists the current worktrees for the configured repositories."},
+      {"mk", "REPO BRANCH UPSTREAM", "Creates a worktree off the specified repository."},
+      {"rm", "REPO TICKET", "Removes a worktree from the specified repository."},
+      {"up", "Updates the worktree cache for each repository."}
     ]
   end
 
@@ -39,6 +44,11 @@ defmodule Tresmid.CLI.Commands do
   @doc false
   def run({opts, args, :help}) do
     case args do
+      ["ed"| _] -> Tresmid.CLI.Docs.usage(:ed)
+      ["ls"| _] -> Tresmid.CLI.Docs.usage(:ls)
+      ["mk"| _] -> Tresmid.CLI.Docs.usage(:mk)
+      ["rm"| _] -> Tresmid.CLI.Docs.usage(:rm)
+      ["up"| _] -> Tresmid.CLI.Docs.usage(:up)
       _ -> Tresmid.CLI.Docs.usage
     end
   end
@@ -55,7 +65,8 @@ defmodule Tresmid.CLI.Commands do
           ["ed", repo, ticket] -> Tresmid.Edit.run(repo, ticket)
           ["ls" | repos]  -> Tresmid.List.run(repos)
           ["mk", repo, branch, upstream] -> Tresmid.Make.run(repo, branch, upstream)
-          ["rm", repo, ticket] -> Tresmid.Remove.run(repo, ticket)
+          ["rm", repo | tickets] -> Tresmid.Remove.run(repo, tickets)
+          _ -> Tresmid.CLI.Docs.usage
         end
     end
   end

@@ -7,3 +7,5 @@ config :tresmid,
   mongo_db: "tresmid",
   mongo_host: "localhost",
   mongo_port: 27017
+
+config :logger, level: :warn

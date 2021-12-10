@@ -17,6 +17,7 @@ defmodule Tresmid.CLI.Options do
       {"c", "config", "PATH",
         "Sets the configuration file, (defaults to ~/.config/tresmid/config.yml)."
       },
+      {"h", "help", "Provides usage information."},
       {"u", "update", "Updates the repository cache before processing command."},
       {"v", "verbose", "Enables verbose logging messages."}
     ]
@@ -27,10 +28,12 @@ defmodule Tresmid.CLI.Options do
       args, [
         switches: [
           config: :string,
+          help: :boolean,
           update: :boolean,
           verbose: :boolean,
         ], aliases: [
           c: :config,
+          h: :help,
           u: :update,
           v: :verbose
         ]
@@ -41,7 +44,7 @@ defmodule Tresmid.CLI.Options do
   def preproc_opts({opts, args, []}) do
     # TODO: Add Runtime Logging Configuration
     cond do
-      Enum.member?(args, "help") ->
+      Enum.member?(args, "help") or opts[:help] != nil ->
         {opts, args, :help}
       true ->
         # Start Config Server

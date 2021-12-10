@@ -12,24 +12,17 @@ defmodule Tresmid.Make do
   @doc since: "0.1.0"
   def run(key, branch, upstream) do
     Logger.info("Called make operation.")
-    cache_path = Tresmid.Config.get("cache_path")
-    repos = Tresmid.Config.get("repos")
 
-    {:ok, data} = YamlElixir.read_from_file(cache_path)
+    repos = Tresmid.Config.get("repos")
+    data = Tresmid.Config.read_cache()
 
     if key in Map.keys(data) do
       repo = data[key]
       conf = repos[key]
 
-      mains =
-        repo
-        |> Enum.filter(
-          fn x ->
-            x["branch"] == conf["main"]
-          end
-        )
-      if length(mains) > 0 do
-        main = Enum.at(mains, 0)
+      main = Tresmid.Config.get_main(repo, conf)
+
+      if main != nil do
         git = Git.new(main["path"])
         wt_path = Path.join(Path.dirname(main["path"]), branch)
         if !File.exists?(wt_path) do
