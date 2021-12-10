@@ -13,7 +13,10 @@ defmodule Tresmid.Edit do
   @doc since: "0.1.0"
   def run(repo, ticket) do
     Logger.info("Called edit operation.")
-    IO.inspect ticket
+    cache = Tresmid.Config.get("cache_path")
+    cmd = Tresmid.Config.get("editor")
+    IO.inspect cache
+    IO.inspect cmd
   end
 
 

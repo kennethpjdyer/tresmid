@@ -1,4 +1,5 @@
 defmodule Tresmid.Config do
+  require Logger
   use GenServer
   @moduledoc """
 
@@ -19,8 +20,14 @@ defmodule Tresmid.Config do
     {:noreply, Map.put(state, key, val)}
   end
 
-  def handle_call({:get, key}, state) do
-    {:reply, Map.get(state, key)}
+  @impl true
+  def handle_call({:get, key}, _from, state) do
+    {:reply, Map.get(state, key), state}
+  end
+
+  @impl true
+  def handle_call(:dump, _from, state) do
+    {:reply, state, state}
   end
 
   ############################# CLIENT IMPLEMENTATION #########################
@@ -29,26 +36,17 @@ defmodule Tresmid.Config do
   end
 
   def start_link(nil) do
-    start_link()
+    start_link(Path.expand("~/.config/tresmid/config.yml"))
   end
 
   def start_link(cpath) do
-    IO.inspect(cpath)
     confpath = Path.expand(cpath)
     cond do
-      # No Confpath
-      confpath == nil -> start_link()
-
       # Confpath Exists
       File.regular?(confpath) -> read_config(confpath)
 
       # Default Confpath
-      true ->
-        path = Path.expand("~/.config/tresmid/config.yml")
-        cond do
-          File.regular?(path) -> read_config(path)
-          true -> start_link()
-        end
+      true -> start_link()
     end
   end
 
@@ -62,6 +60,10 @@ defmodule Tresmid.Config do
     GenServer.cast(:tresmid, {:set, key, val})
   end
 
+  def dump do
+    GenServer.call(:tresmid, :dump)
+  end
+
   ########################### HELPER FUNCTIONS ################################
   def read_config(path) do
     case YamlElixir.read_from_file(path) do
@@ -73,9 +75,11 @@ defmodule Tresmid.Config do
 
   def default do
     %{
-      repo_home: Path.expand("~/.tresmid"),
-      cache_path: Path.expand("~/.config/tresmid/cache"),
-      verbose: false
+      "repo_home" => Path.expand("~/.tresmid"),
+      "cache_path" => Path.expand("~/.config/tresmid/cache"),
+      "verbose" => false,
+      "repos" => %{},
+      "editor" => "code"
     }
   end
   def default(config) do

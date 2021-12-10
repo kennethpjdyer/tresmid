@@ -6,15 +6,15 @@ defmodule Tresmid.CLI.Commands do
 
   |Command | Description |
   |---|---|
-  | `cd` | Changes to the directory of the given ticket. |
   | `ed` | Opens the configured text editor in the directory of the given ticket. |
+  |`ls` | Lists the available Git worktrees in configured repositories. |
   | `mk` | Creates a new work tree for the specified repository and upstream. |
   | `rm` | Removes a work tree for the specified ticket. |
   | `up` | Updates the work tree cache. |
 
-  #{Tresmid.ChangeDir.docs}
-
   #{Tresmid.Edit.docs}
+
+  #{Tresmid.List.docs}
 
   #{Tresmid.Make.docs}
 
@@ -23,30 +23,40 @@ defmodule Tresmid.CLI.Commands do
   #{Tresmid.Update.docs}
   """
 
+  @doc false
   def docs do
     [
       {"help", "Provides usage information."}
     ]
   end
 
+  @doc false
   def help(cmd) do
     "\n\tSee tresmid #{cmd} help for additional information."
   end
 
   ################### HELP COMMANDS #############################
+  @doc false
   def run({opts, args, :help}) do
     case args do
       _ -> Tresmid.CLI.Docs.usage
     end
   end
 
+  @doc false
   def run({opts, args}) do
     case args do
-      ["ed", repo, ticket] -> Tresmimd.Edit.run(repo, ticket)
-      ["cd", repo, ticket] -> Tresmimd.ChangeDir.run(repo, ticket)
       ["up"] -> Tresmid.Update.run
-      ["mk", repo, ticket, text, upstream] -> Tresmid.Make.run(repo, ticket, text, upstream)
-      ["rm", repo, ticket] -> Tresmid.Remove.run(repo, ticket)
+      _ ->
+        if Enum.member?(opts, :update) do
+          Tresmid.Update.run
+        end
+        case args do
+          ["ed", repo, ticket] -> Tresmid.Edit.run(repo, ticket)
+          ["ls" | repos]  -> Tresmid.List.run(repos)
+          ["mk", repo, ticket, text, upstream] -> Tresmid.Make.run(repo, ticket, text, upstream)
+          ["rm", repo, ticket] -> Tresmid.Remove.run(repo, ticket)
+        end
     end
   end
 end

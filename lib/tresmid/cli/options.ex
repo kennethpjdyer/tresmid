@@ -17,7 +17,7 @@ defmodule Tresmid.CLI.Options do
       {"c", "config", "PATH",
         "Sets the configuration file, (defaults to ~/.config/tresmid/config.yml)."
       },
-      {"L", "local", "Specifies local repository configuration."},
+      {"u", "update", "Updates the repository cache before processing command."},
       {"v", "verbose", "Enables verbose logging messages."}
     ]
   end
@@ -27,9 +27,11 @@ defmodule Tresmid.CLI.Options do
       args, [
         switches: [
           config: :string,
-          verbose: :boolean
+          update: :boolean,
+          verbose: :boolean,
         ], aliases: [
           c: :config,
+          u: :update,
           v: :verbose
         ]
       ])
@@ -47,9 +49,9 @@ defmodule Tresmid.CLI.Options do
 
         # Set Verbose
         if Enum.member?(opts, :verbose) do
-          Tresmid.Config.set(:verbose, true)
+          Tresmid.Config.set("verbose", true)
         else
-          Tresmid.Config.set(:verbose, false)
+          Tresmid.Config.set("verbose", false)
         end
         {opts, args}
     end
