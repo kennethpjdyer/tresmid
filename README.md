@@ -8,17 +8,17 @@ repositories.
 
 ## Installation
 
-**Note: Tresmid is not yet available on Hex, use `mix` to compile from source.**
+#. Clone from GitHub:
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `tresmid` to your list of dependencies in `mix.exs`:
+```console
+$ git clone git@github.com:kennethpjdyer/tresmid.git
+$ cd tresmid
+```
 
-```elixir
-def deps do
-  [
-    {:tresmid, "~> 0.1.0"}
-  ]
-end
+#. Install escript:
+
+```console
+$ mix escript.install
 ```
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
